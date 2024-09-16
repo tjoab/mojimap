@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>My JS Project</title>
+		<script type="module">
+			import * as vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js";
+			window.vision = vision;
+		</script>
+
+		<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.min.js"></script>
+		<link rel="stylesheet" href="./src/styles.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+
+	<body>
+		<div>
+			<div class="playground">
+				<div class="grid_background_wrapper">
+					<div class="grid_background"></div>
+				</div>
+				<div class="app">
+					<video class="input_video"></video>
+					<canvas class="output_canvas" width="1280px" height="720px"> </canvas>
+				</div>
+				<div class="footer">
+					<div class="panel_wrapper">
+						<div class="panel_content">
+							<p class="panel_text">
+								Mojimap is a playground that infers what emoji your are
+								referring to based on what is <i>sees</i>.
+							</p>
+							<p class="panel_text">
+								There are two main components that power this tool, a
+								lightweight neural network that detects 478 facial points. And a
+								facial blendshape model that uses these detection points to
+								figure out what facial expression is being expressed.
+							</p>
+							<p class="panel_text">
+								For instance, if the user is smiling, and to what extent. Which
+								eye is closed or open, or if they are squinting. Are the
+								eyebrows pointed downwards?
+							</p>
+							<p class="panel_text">
+								Both of these models are super lightweight and are actually
+								running client-side on your browser!
+							</p>
+							<p class="panel_text">
+								If you have any ideas about some next steps for this project,
+								please reach out to me via
+								<a href="mailto:tj.ayoub@gmail.com"
+									>email<span class="icon">&#8599;</span></a
+								>
+								or
+								<a href="https://www.instagram.com/tjoab/" target="”_blank”"
+									>instagram<span class="icon">&#8599;</span></a
+								>.
+							</p>
+							<div class="panel_footer">
+								<p>Made by</p>
+								<p>
+									<a href="https://www.tjoab.com/" target="”_blank”"
+										>TJ Ayoub<span class="icon">&#8599;</span></a
+									>
+								</p>
+							</div>
+							<div class="panel_footer">
+								<p>Version</p>
+								<p>1.0.0 (Updated 16.09.2024)</p>
+							</div>
+							<div class="panel_footer">
+								<p>References</p>
+								<p>
+									<a
+										href="https://blog.tensorflow.org/2020/11/iris-landmark-tracking-in-browser-with-MediaPipe-and-TensorFlowJS.html"
+										target="”_blank”"
+										>Tensorflow<span class="icon">&#8599;</span></a
+									>
+									&nbsp;&nbsp;
+									<a
+										href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker"
+										target="”_blank”"
+										>Google MediaPipe<span class="icon">&#8599;</span></a
+									>
+									&nbsp;&nbsp;
+									<a
+										href="https://www.dmi.unict.it/ortis/articoli/85136132333.pdf"
+										target="”_blank”"
+										>Gesture Recognition<span class="icon">&#8599;</span></a
+									>
+								</p>
+							</div>
+						</div>
+
+						<div class="button_wrapper">
+							<div class="panel_title" onclick="toggle_panel_visibility()">
+								what is this?
+							</div>
+							<div class="panel_title start" onclick="toggle_running()">
+								start
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="bubble" style="display: none">
+					<img id="emoji" width="250px" height="250px" />
+				</div>
+				<div class="nav_wrapper">
+					<div class="nav">
+						<div class="nav_content">
+							<div class="title_wrapper">
+								<h1 class="title">mojimap</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="./src/index.js"></script>
+	</body>
+</html>
