@@ -246,7 +246,6 @@ a:hover .icon {
 	transform: rotate(30deg);
 }
 
-/* underline */
 .panel_footer::after {
 	content: "";
 	position: absolute;

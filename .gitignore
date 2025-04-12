@@ -2,3 +2,4 @@ node_modules/
 dist/
 .cache/
 points.txt
+.DS_Store

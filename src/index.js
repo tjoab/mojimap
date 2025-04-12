@@ -3,6 +3,7 @@ import Camera from "./camera";
 let camera, face_mesh, drawing_utils;
 let running = false;
 
+// Load model and initialize the utils to draw the mesh
 async function initialize_model() {
 	const vision_package_path = await vision.FilesetResolver.forVisionTasks(
 		"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
@@ -22,6 +23,7 @@ async function initialize_model() {
 	drawing_utils = new vision.DrawingUtils(camera.canvas_ctx);
 }
 
+// Draw and render the mesh based on model ouput
 function draw(results) {
 	camera.canvas_ctx.clearRect(0, 0, camera.canvas.width, camera.canvas.height);
 
@@ -31,6 +33,7 @@ function draw(results) {
 
 	if (results.faceLandmarks) {
 		for (const landmarks of results.faceLandmarks) {
+			// Draw selected facial features
 			drawing_utils.drawConnectors(
 				landmarks,
 				vision.FaceLandmarker.FACE_LANDMARKS_TESSELATION,
@@ -77,35 +80,19 @@ function draw(results) {
 				vision.FaceLandmarker.FACE_LANDMARKS_LEFT_IRIS,
 				{ color: "#ffffff", lineWidth: 2.5 }
 			);
-			//landmarks.forEach((landmark) => {
-			//	camera.canvas_ctx.beginPath();
-			//	camera.canvas_ctx.arc(
-			//		landmark.x * camera.canvas.width,
-			//		landmark.y * camera.canvas.height,
-			//		1.25,
-			//		0,
-			//		Math.PI * 2
-			//	);
-			//	camera.canvas_ctx.fillStyle = "#FFF3E7";
-			//	camera.canvas_ctx.fill();
-			//});
 		}
 	}
 	camera.canvas_ctx.restore();
 }
 
+// Animate and display emoji bubble given a coordinate on the cavas (i.e. users current face location)
 function showBubble(anchor_x, anchor_y, angle) {
 	const bubble = document.getElementById("bubble");
-
-	// Set bubble position and rotation
 	bubble.style.left = `${anchor_x}px`;
 	bubble.style.top = `${anchor_y}px`;
 	bubble.style.transform = `rotate(${angle}deg)`;
 
-	// Show the bubble
 	bubble.style.display = "flex";
-
-	// Fade it in
 	requestAnimationFrame(() => {
 		bubble.style.opacity = 1;
 	});
@@ -114,10 +101,11 @@ function showBubble(anchor_x, anchor_y, angle) {
 		bubble.style.opacity = 0;
 		setTimeout(() => {
 			bubble.style.display = "none";
-		}, 500); // Wait for fade out transition to complete
+		}, 500);
 	}, 500);
 }
 
+// Detect if the user is holding a still face pose to trigger 'detection'
 function detect_stillness(
 	results,
 	current_time,
@@ -152,9 +140,12 @@ function detect_stillness(
 		if (still_time >= target_hold_time) {
 			console.log("FACE STILL");
 
+			// Use landmark point 1 (corresponds to tip of nose) as anchor
 			let anchor_x = results.faceLandmarks[0][1].x * camera.canvas.width;
 			anchor_x = camera.canvas.width - anchor_x;
 			let anchor_y = results.faceLandmarks[0][1].y * camera.canvas.height;
+
+			// Estimate face tilt angle
 			let angle =
 				Math.atan2(
 					results.faceLandmarks[0][10].y - results.faceLandmarks[0][152].y,
@@ -163,10 +154,10 @@ function detect_stillness(
 					(180 / Math.PI) +
 				90;
 			let matched = emoji_match(results);
+
 			if (matched) {
 				showBubble(anchor_x, anchor_y, -angle);
 			}
-
 			still_time = 0;
 		}
 
@@ -183,6 +174,8 @@ function detect_stillness(
 	}
 }
 
+// Match facial expression to an emoji image
+// To extend emoji support, look as other blendshape scores and create a new ruleset for that expression
 function emoji_match(results) {
 	let image = document.getElementById("emoji");
 	var matched = true;
@@ -213,6 +206,8 @@ function emoji_match(results) {
 		smile_left,
 		smile_right,
 	];
+
+	// Matching logic
 	if (
 		right_eye_closed - left_eye_closed > 0.135 &&
 		smile_right > 0.3 &&
@@ -258,12 +253,14 @@ function emoji_match(results) {
 	return matched;
 }
 
+// Main loop – runs continuously to predict and draw on each frame
 async function predict_and_draw() {
 	let prev_timestamp = -1;
 	let results;
 	let prev_results = [];
 	let still_time = 0;
 
+	// Wait until the video is ready
 	if (camera.video.readyState >= 2) {
 		predict_on_frame();
 	} else {
@@ -276,12 +273,15 @@ async function predict_and_draw() {
 		let timestamp = performance.now();
 		if (prev_timestamp !== camera.video.currentTime) {
 			results = await face_mesh.detectForVideo(camera.video, timestamp);
+
+			// Debug line to see first time results
 			if (prev_timestamp == -1) {
 				console.log(results);
 			}
+
 			prev_timestamp = camera.video.currentTime;
-			// maybe do stuff
 			draw(results);
+
 			if (running) {
 				[prev_results, still_time] = detect_stillness(
 					results,
@@ -296,6 +296,7 @@ async function predict_and_draw() {
 	}
 }
 
+// Logic to toggle the info panel
 window.toggle_panel_visibility = function () {
 	let panel = document.getElementsByClassName("panel_content")[0];
 
@@ -306,6 +307,7 @@ window.toggle_panel_visibility = function () {
 	}
 };
 
+// Logic to start and stop the prediction loop
 window.toggle_running = function () {
 	let button = document.getElementsByClassName("panel_title")[1];
 
@@ -322,6 +324,7 @@ window.toggle_running = function () {
 	}
 };
 
+// Initialize app
 async function main() {
 	camera = await Camera.initialize();
 	await initialize_model();

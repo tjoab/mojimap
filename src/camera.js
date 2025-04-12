@@ -1,5 +1,6 @@
 export default class Camera {
 	constructor() {
+		// Get video and canvas elements from the DOM
 		this.video = document.getElementsByClassName("input_video")[0];
 		this.canvas = document.getElementsByClassName("output_canvas")[0];
 		this.canvas_ctx = this.canvas.getContext("2d");
@@ -7,12 +8,14 @@ export default class Camera {
 
 	static async initialize() {
 		try {
+			// Check for user has toggled off webcam support
 			if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
 				throw new Error(
 					"Browser API navigator.mediaDevices.getUserMedia not available. Please allow webcam use."
 				);
 			}
 
+			// Request access to webcam video
 			const video_config = {
 				audio: false,
 				video: true,
@@ -21,6 +24,8 @@ export default class Camera {
 
 			const camera = new Camera();
 			camera.video.srcObject = stream;
+
+			// Wait for video to be ready
 			await new Promise((resolve) => {
 				camera.video.onloadedmetadata = () => {
 					resolve();
@@ -33,19 +38,5 @@ export default class Camera {
 		} catch (error) {
 			alert(error);
 		}
-
-		//const targetFPS = 80;
-		//const videoConfig = {
-		//	audio: false,
-		//};
-
-		//await new Promise((resolve) => {
-		//		camera.video.onloadedmetadata = () => {
-		//			resolve(camera.video);
-		//		};
-		//	});
-
-		//camera.canvas.width = camera.video.videoWidth;
-		//camera.canvas.height = camera.video.videoHeight;
 	}
 }

@@ -1,3 +1,6 @@
+// Some experiemntal function that computed ratios of proportions to infer certain expressions.
+// These function are NOT used anywhere but are included for reference and archive purposes.
+
 export function compute_ar1(mesh) {
 	// Left eye
 	let c1 = mesh[33];
@@ -115,6 +118,6 @@ export function detect_smile_sad(mesh) {
 	} else if ((Ll.y > Ckl.y && Ll.x > Cnl.x) || (Lr.y > Ckr.y && Lr.x < Cnr.x)) {
 		console.log("sad lips");
 	} else {
-		console.log("uknown lips");
+		console.log("unknown lips");
 	}
 }
